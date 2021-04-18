@@ -3,7 +3,7 @@
         <div class="container">
             <div class="navbar-header">
                 <a class="navbar-brand" href="home">
-                    <img src="<?=loadAsset('media/imgs/logo.png')?>" class="img-responsive">
+                    <img src="<?=loadAsset('media/imgs/logoo.png')?>" class="img-responsive">
                 </a>
 
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nav-menu"
