@@ -13,4 +13,5 @@ jobs:
       with:
         server: ftpupload.net
         username: epiz_27937925
-        password: ${{ secrets.moshichat_ftp_password }}
+        password: ${{secrets.moshichat_ftp_password}}
+        server-dir: htdocs/
