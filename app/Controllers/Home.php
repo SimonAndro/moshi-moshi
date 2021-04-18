@@ -1132,7 +1132,7 @@ class Home {
 		 * notifications and other messages
 		 * */
 
-		//get most recent of unread message count
+		//get most recent of unread message total
 		$sql = "
 		SELECT 
 			COUNT(message_data)
