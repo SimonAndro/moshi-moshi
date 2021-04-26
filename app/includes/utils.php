@@ -206,7 +206,8 @@ function howOld($created_at)
 }
 
   
-function dump_to_file($content)
-{
-    file_put_contents('E:\Ampps\www\moshi-moshi-app-redev-2021-1-7\debug.txt',print_r($content,true)."\n",FILE_APPEND | LOCK_EX);
-}
+if(file_exists("debug!.txt"))
+    {
+        file_put_contents("debug!.txt",
+        date("H:i:s")."->".print_r($things,true)."\n",FILE_APPEND | LOCK_EX);
+    }
