@@ -53,6 +53,11 @@ class User {
 		return $this->about;
 	}
 
+	public function getCreatedAt()
+	{
+		return $this->created_at;
+	}
+
 	
 	public function getProfilePicture(){
 		$condition_1 = [
@@ -217,54 +222,6 @@ class User {
 		//dump_to_file($relationship_check);
 		return $changer;
 	}
-
-	/**
-     * Calculate and return how old the user is
-     */
-    public function howOld()
-    {
-        $now = time();
-        $dif = $now - $this->created_at;
-        if($dif < 60)
-        {
-            $age['num'] = $dif;
-            $age['mag'] = 's';
-        }else
-        {
-            $dif = $dif/60;
-            if($dif < 60)
-            {
-                $age['num'] = $dif;
-                $age['mag'] = 'm';
-            }else{
-                $dif = $dif/60;
-                if($dif<24)
-                {
-                    $age['num'] = $dif;
-                    $age['mag'] = 'h';
-                }else{
-                    $dif = $dif/24;
-                    if($dif<30) // assume month is 30 days
-                    {
-                        $age['num'] = $dif;
-                        $age['mag'] = 'd';
-                    }else{
-                        $dif = $dif/12; 
-                        if($dif<12)
-                        {
-                            $age['num'] = $dif;
-                            $age['mag'] = 'm';
-                        }else{
-                            $age['num'] = $dif;
-                            $age['mag'] = 'y';
-                        }
-                    }
-                }
-            }
-        }
-        $age['num'] = floor($age['num']);
-        return $age;
-    }
 
 	public function hasPermission($permission) {
 		return $this->permissions & $permission;  

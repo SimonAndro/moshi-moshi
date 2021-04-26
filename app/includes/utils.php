@@ -215,10 +215,10 @@ function howOld($created_at)
                     if($dif<12)
                     {
                         $age['num'] = $dif;
-                        $age['mag'] = 'm';
+                        $age['mag'] = 'month(s)';
                     }else{
                         $age['num'] = $dif;
-                        $age['mag'] = 'y';
+                        $age['mag'] = 'year(s)';
                     }
                 }
             }

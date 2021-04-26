@@ -26,9 +26,11 @@
                         <img src="<?=!($user->getProfilePicture())?loadAsset('media/imgs/user-avatar.png'):loadAsset($user->getProfilePicture(),true)?>"
                             class="card-img" style="background:#F5F8FA;">
                         <h4 id="my-name" class="card-title ">
+                            <a href="profile?who=<?=$user->getUserId()?>">
                             <?=$user->getName()?> <small>@
                                 <?=$user->getName()?>
                             </small>
+                            </a>
                         </h4>
                         <p class="card-text text-about">
                             <?=$user->getAbout()==""?"No about information No about information No about information No about information No about information No about information No about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about information ":$user->getAbout()?>
@@ -278,7 +280,10 @@
                 </ul>
                 <?php endif ?>
                 <p class="card" style="text-align:center; height:50px; padding-top:10px; font-size:18px;">joined
-                    <?=$profileOwner->howOld()['num'].$profileOwner->howOld()['mag'] ?> ago
+                    <?php 
+                        $howOld = howOld($profileOwner->getCreatedAt());
+                       echo $howOld['num'].$howOld['mag'] 
+                    ?> ago
                 </p>
 
             </div>

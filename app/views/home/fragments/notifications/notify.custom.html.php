@@ -7,7 +7,13 @@
             <img src="<?=!($notifSender->getProfilePicture())?loadAsset('media/imgs/user-avatar.png'):loadAsset($notifSender->getProfilePicture(),true)?>" class="avatar-small" alt="50x50">
         </div>
         <div class="msg-content" >
-            <h5><?=$notifSender->getName()?> <small>@<?=$notifSender->getName()?> - <?=$notif->howOld()['num']?><?=$notif->howOld()['mag']?></small></h5>
+            <h5><?=$notifSender->getName()?> <small>@<?=$notifSender->getName()?> 
+            - 
+            <?php 
+                $howOld = howOld($notif->getCreatedAt());
+                echo $howOld['num'].$howOld['mag'] 
+            ?> ago
+            </small></h5>
             <p><?=$notif->getNotifMsg()?></p>
         </div>
     </a>

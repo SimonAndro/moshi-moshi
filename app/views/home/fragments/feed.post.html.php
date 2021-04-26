@@ -1,7 +1,15 @@
 <li data-id='<?=$post->getPostId()?>'>
 <img src="<?=!($post->getCreator()->getProfilePicture())?loadAsset('media/imgs/user-avatar.png'):loadAsset($post->getCreator()->getProfilePicture(),true)?>" class="feed-avatar img-circle">
 <div class="feed-post">
-    <a href="profile?who=<?=$post->getCreator()->getUserId()?>"><h5><?=$post->getCreator()->getName()?> <small>@<?=$post->getCreator()->getName()?> - <?=$post->howOld()['num']?><?=$post->howOld()['mag']?></small></h5></a>
+    <a href="profile?who=<?=$post->getCreator()->getUserId()?>">
+    <h5><?=$post->getCreator()->getName()?> 
+    <small>@<?=$post->getCreator()->getName()?> 
+    -
+    <?php 
+        $howOld = howOld($post->getCreatedAt());
+        echo $howOld['num'].$howOld['mag'] 
+    ?> ago
+    </small></h5></a>
     <p><?=$post->getMsg()?></p>
 </div>
 <div class="action-list">
