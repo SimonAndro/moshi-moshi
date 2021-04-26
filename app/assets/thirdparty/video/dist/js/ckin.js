@@ -1,3 +1,17 @@
+
+
+$(document).ready(function() {
+  $('#video-element').on('loadstart', function (event) {
+    $(this).addClass('.gallery-vid-bg');
+    $(this).attr("poster", "http://localhost/moshi-moshi-app-redev-2021-1-7/app/assets/media/gifs/loading.gif");
+  });
+
+  $('#video-element').on('canplay', function (event) {
+    $(this).removeClass('.gallery-vid-bg');
+    $(this).removeAttr("poster");
+  });
+});
+
 // Get a handle to the player
 player       = document.getElementById('video-element');
 btnPlayPause = document.getElementById('btnPlayPause');
@@ -155,12 +169,12 @@ dragElement(document.getElementById("vid-playerHolder"));
 
 function dragElement(elmnt) {
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id + "header")) {
+  if (document.getElementById("mydivheader")) {
     // if present, the header is where you move the DIV from:
-    document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    document.getElementById("mydivheader").onmousedown = dragMouseDown;
   } else {
     // otherwise, move the DIV from anywhere inside the DIV: 
-    elmnt.onmousedown = dragMouseDown;
+    // elmnt.onmousedown = dragMouseDown;
   }
 
   function dragMouseDown(e) {

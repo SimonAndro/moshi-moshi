@@ -5,11 +5,13 @@
             class="avatar-small" alt="50x50">
     </div>
     <div class="msg-content">
-        <h5>
-            <?=$user->getName()?> <small>@
-                <?=$user->getName()?>
-            </small>
-        </h5>
+        <a href="profile?who=<?=$user->getUserId()?>">
+            <h5>
+                <?=$user->getName()?> <small>@
+                    <?=$user->getName()?>
+                </small>
+            </h5>
+        </a>
         <p class="card-text text-about">
             <?=$user->getAbout()==""?"No about information":$user->getAbout()?>
         </p>

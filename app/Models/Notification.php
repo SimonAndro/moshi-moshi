@@ -4,6 +4,8 @@ namespace app\Models;
 class Notification{
     const FOLLOWED = 1;
     const RECIPED = 2;
+    const REPOSTED = 3;
+    const LIKED = 4;
     
     public $id;
     public $receiver_id;

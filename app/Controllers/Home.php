@@ -14,9 +14,12 @@ class Home {
 	private $galleryFoldersTable;
 	private $filesTable;
 	private $thumbnailsTable;
+	private $postLikesTable;
+	private $postSharesTable;
+
 	private $mySelf;
 
-	public function __construct(Authentication $authentication, DatabaseTable $usersTable, DatabaseTable $relationshipsTable, DatabaseTable $chatsTable,DatabaseTable $postsTable, DatabaseTable $notificationsTable, DatabaseTable $galleryFoldersTable,DatabaseTable $filesTable,DatabaseTable $thumbnailsTable) {
+	public function __construct(Authentication $authentication, DatabaseTable $usersTable, DatabaseTable $relationshipsTable, DatabaseTable $chatsTable,DatabaseTable $postsTable, DatabaseTable $notificationsTable, DatabaseTable $galleryFoldersTable,DatabaseTable $filesTable,DatabaseTable $thumbnailsTable,DatabaseTable $postLikesTable,DatabaseTable $postSharesTable) {
 		$this->authentication = $authentication;
 		$this->usersTable = $usersTable;
 		$this->relationshipsTable = $relationshipsTable;
@@ -26,6 +29,8 @@ class Home {
 		$this->galleryFoldersTable = $galleryFoldersTable;
 		$this->filesTable = $filesTable;  
 		$this->thumbnailsTable = $thumbnailsTable;
+		$this->postLikesTable = $postLikesTable;
+		$this->postSharesTable = $postSharesTable;
 	}
 
 	/***
@@ -89,6 +94,129 @@ class Home {
 			];
 	}
 
+	public function postReaction()
+	{
+		//dump_to_file("form received");
+		//dump_to_file($_POST);
+
+		$user = $this->authentication->getUser();
+		if(!$user)	
+		{
+			header('Location: login');
+		}else{
+			$this->mySelf = $user;
+		}
+
+		$target = $shareCount = $likeCount = $statusColor = null;
+		$msg = "fail";
+		if($val = $_POST['val'] and $postId = $val['post'] and $post = $this->postsTable->findById($postId))
+		{
+			if(isset($val['target']))
+			{
+				$target = $val['target'];
+				
+				$postCreator = $post->getCreator();
+
+				if($target === "post_share")
+				{
+					$cond1=[
+						'column'=>"post_id",
+						'match'=>"=",
+						'value'=>$post->getPostId()
+					];
+	
+					$cond2=[
+						'joint'=>"AND",
+						'column'=>"reactor_id",
+						'match'=>"=",
+						'value'=>$user->getUserId()
+					];
+	
+					if($postShareCheck = $this->postSharesTable->find([$cond1, $cond2])[0])
+					{
+						$postShareStatus["id"] = $postShareCheck->getPostShareId();
+						$postShareStatus["react_status"] = !$postShareCheck->getReactStatus();
+					}else{
+						$postShareStatus["react_status"] = 1;
+						$postShareStatus["reacted_at"] = time();
+						$postShareStatus["post_id"] = $post->getPostId();
+						$postShareStatus["reactor_id"] = $user->getUserId();
+						
+						$notif["notify_message_data"] = "post repost";
+						// "your post: ".mb_strimwidth($post->getMsg(), 0, 30, " ...").
+						// "was reposted by ".mb_strimwidth($user->getName(), 0, 20, " ...").
+						// " ~".date("Y-m-d H:i:s");
+						$notif["notify_type"] = \app\Models\Notification::REPOSTED;
+						//$this->triggerNotification($notif,$user,$postCreator);
+					}
+	
+					if($this->postSharesTable->save($postShareStatus))
+					{
+						
+						$shareCount = $post->getShareCount();
+						$statusColor = $post->getUserShareStatus($user)?"#2F92CA":"#ccc";
+						$postId = $post->getPostId();
+						$msg = "success";
+					}
+				}elseif($target == "post_star")
+				{
+					$cond1=[
+						'column'=>"post_id",
+						'match'=>"=",
+						'value'=>$post->getPostId()
+					];
+	
+					$cond2=[
+						'joint'=>"AND",
+						'column'=>"reactor_id",
+						'match'=>"=",
+						'value'=>$user->getUserId()
+					];
+	
+					if($postLikeCheck = $this->postLikesTable->find([$cond1, $cond2])[0])
+					{
+						$postLikeStatus["id"] = $postLikeCheck->getPostLikeId();
+						$postLikeStatus["react_status"] = !$postLikeCheck->getReactStatus();
+					}else{
+						$postLikeStatus["react_status"] = 1;
+						$postLikeStatus["reacted_at"] = time();
+						$postLikeStatus["post_id"] = $post->getPostId();
+						$postLikeStatus["reactor_id"] = $user->getUserId();
+
+						$notif["notify_message_data"] = "Post star";
+						// "your post: ".mb_strimwidth($post->getMsg(), 0, 30, " ...").
+						// "got a star from ".mb_strimwidth($user->getName(), 0, 20, " ...").
+						// " ~".date("Y-m-d H:i:s");
+						$notif["notify_type"] = \app\Models\Notification::LIKED;
+						//$this->triggerNotification($notif,$user,$postCreator);
+					}
+	
+					if($this->postLikesTable->save($postLikeStatus))
+					{
+						
+						$likeCount = $post->getLikeCount();
+						$statusColor = $post->getUserLikeStatus($user)?"#2F92CA":"#ccc";
+						$postId = $post->getPostId();
+						$msg = "success";
+					}
+				}
+				
+			}
+			
+		}
+
+		return[
+			'msg'=>$msg,
+			'shareCount'=>$shareCount,
+			'likeCount'=>$likeCount,
+			'statusColor'=>$statusColor,
+			'post'=>$postId,
+			'target'=>$target,
+			'caller'=>$val['caller'],
+			'wrapper'=>false
+		];
+	}
+
 	public function gallery(){
 
 		$user = $this->authentication->getUser();
@@ -104,6 +232,8 @@ class Home {
 		{
 			if(isset($val["caller"]) and $val["caller"] === "gallery_media_upload")
 			{
+				//dump_to_file($_POST);
+				//dump_to_file($_FILES);
 
 				if($files = inputFile('file'))
 				{
@@ -148,9 +278,11 @@ class Home {
 								$uploadedFile = $this->filesTable->findById($id);
 								if($uploadedFile->getFileType() == "video")
 								{
+									//dump_to_file("creating thumbnail");
 									$thumbnailName = createThumbnail(loadAsset($uploadedFile->getFileName(),true),$upload->getDestination());
 									$thumbnail['media_id'] = $uploadedFile->getFileId();
-									$thumbnail['thumbnail_name'] = $upload->getDestinationFolder().$thumbnailName;
+									//$thumbnail['thumbnail_name'] = $upload->getDestinationFolder().$thumbnailName;
+									$thumbnail['thumbnail_name'] = $thumbnailName;
 									$thumbnail['media_type'] = strtolower($file['type']);
 									$savedThumbail = $this->thumbnailsTable->save($thumbnail);
 								}
@@ -237,6 +369,7 @@ class Home {
 	}
 
 	public function loadGalleryMedia(){
+		//dump_to_file($_GET);
 		$user = $this->authentication->getUser();
 		if(!$user)	
 		{
@@ -366,12 +499,6 @@ class Home {
 		$limit = $page;
 		$offset = ($currentPage-1)*$page;
 	
-		$cond1 = [
-			'column'=>'creator_id ',
-			'match'=>'=',
-			'value'=>$profileOwner->getUserId()
-		];
-		$postCount = count($this->postsTable->find([$cond1]));
 
 		if(isset( $_GET['gal']) and $reqId = $_GET['req'])
 		{
@@ -381,21 +508,75 @@ class Home {
 				$myGalleryFolders = $this->loadMyGallery($profileOwner);
 				$galleryExplorer = loadTemplate("gallery/gallery.explorer.html.php", 
 						[
-							"myGalleryFolders"=>$myGalleryFolders
+							"myGalleryFolders"=>$myGalleryFolders,
+							"profileOwner"=>$profileOwner,
+							"user"=>$user
 						]);	
 				
 			}else{
 				$galleryExplorer = loadTemplate("gallery/gallery.explorer.html.php", 
 						[
 							"myGalleryFolders"=>[],
-							"galleryError"=>true
+							"galleryError"=>true,
+							"profileOwner"=>$profileOwner,
+							"user"=>$user
 						]);	
 			}
 		}else{
-			$posts = $this->postsTable->find([$cond1],"created_at DESC",$limit,$offset);
+
+			$cond1 = [
+				'column'=>'creator_id ',
+				'match'=>'=',
+				'value'=>$profileOwner->getUserId()
+			];
+			$ownerPosts = $this->postsTable->find([$cond1]);
+	
+			$cond1 = [
+				'column'=>'reactor_id',
+				'match'=>'=',
+				'value'=>$profileOwner->getUserId()
+			];
+			$cond2 = [
+				'joint'=>"AND",
+				'column'=>'react_status',
+				'match'=>'=',
+				'value'=>1
+			];
+			$resharePosts = $this->postSharesTable->find([$cond1, $cond2]);
+	
+			$postCount = count($resharePosts) + count($ownerPosts) ;
+
+			$resharePostIds = [];
+			foreach($resharePosts as $repost)
+			{
+				$resharePostIds[] = $repost->getPostId();
+			}
+
+
+		
+			$conds[] = [
+				'column'=>'creator_id ',
+				'match'=>'=',
+				'value'=>$profileOwner->getUserId()
+			];
+
+			
+
+			if(!empty($resharePostIds))
+			{
+				$conds[] = [
+					'joint'=>"OR",
+					'column'=>'id ',
+					'match'=>'IN',
+					'value'=>$resharePostIds
+				];
+			}
+
+			$posts = $this->postsTable->find($conds,"created_at DESC",$limit,$offset);
+
 			foreach($posts as $post)
 			{
-				$row = loadTemplate('home/fragments/feed.post.html.php',['post'=>$post]);
+				$row = loadTemplate('home/fragments/posts/post.feed.html.php',['post'=>$post, 'user'=>$user]);
 				array_push($feeds,$row);
 			}
 			
@@ -411,7 +592,7 @@ class Home {
 		}
 		
 		$notifData  = $this->getNotifications($user,1);
-		$stats  = $this->getStatistics($profileOwner);
+		$stats  = $this->getStatistics($profileOwner,true);
 
         return 
         [
@@ -432,7 +613,7 @@ class Home {
 	/**
 	 * Get user statistics
 	 */
-	public function getStatistics($user)
+	public function getStatistics($user, $isProfile = false)
 	{
 		// count posts
 		$cond1 = [
@@ -440,7 +621,8 @@ class Home {
 			'match'=>'=',
 			'value'=>$user->getUserId()
 		];
-		$posts = count($this->postsTable->find([$cond1]));
+		$createdPosts = $this->postsTable->find([$cond1]);
+		$posts = count($createdPosts);
 
 		// count followers
 		$cond1 = [
@@ -478,9 +660,22 @@ class Home {
 		];
 		$galleryFiles = count($this->filesTable->find([$cond1]));
 
+		$likes = 0;
+		$reposts = 0;
+		if($isProfile)
+		{
+			// count gunnered likes and gunnered reposts
+			foreach($createdPosts as $cp)
+			{
+				$likes += $cp->getLikeCount();
+				$reposts += $cp->getShareCount();
+			}
+		}
 
 		return[
 			"posts" => countMagnitude($posts),
+			"likes"=> countMagnitude($likes),
+			"reposts"=> countMagnitude($reposts),
 			"followers" => countMagnitude($followers),
 			"followees" => countMagnitude($followees),
 			"galleryFiles"=> countMagnitude($galleryFiles)
@@ -553,9 +748,9 @@ class Home {
 		$limit = $page;
 		$offset = ($currentPage-1)*$page;
 		$cond1 = [
-			'column'=>'followed_back',
+			'column'=>'followee_id',
 			'match'=>'=',
-			'value'=>0
+			'value'=>$user->getUserId()
 		];
 		$cond2 = [
 			'joint'=>'OR',
@@ -565,12 +760,14 @@ class Home {
 		];
 		$relationships = $this->relationshipsTable->find([$cond1,$cond2]);
 		$followees = array();
-		if(!empty($relationships))
+	
+		if(!empty($relationships) or !empty($user))
 		{
 			foreach($relationships as $relationship)
 			{
-				$followees[] = $relationship->getFolloweeId();
+				$followees[] = $relationship->getOtherId($user->getUserId());
 			}
+			$followees[] = $user->getUserId();
 
 			$cond1 = [
 				'column'=>'creator_id ',
@@ -581,7 +778,7 @@ class Home {
 			$posts = $this->postsTable->find([$cond1],"created_at DESC",$limit,$offset);
 			foreach($posts as $post)
 			{
-				$row = loadTemplate('home/fragments/feed.post.html.php',['post'=>$post]);
+				$row = loadTemplate('home/fragments/posts/post.feed.html.php',['post'=>$post,'user'=>$user]);
 				array_push($feeds,$row);
 			}
 
@@ -763,32 +960,7 @@ class Home {
 
 				if($sendNotification)
 				{
-					// create notification
-					$notif["sender_id"] = $user->getUserId();
-					$notif["receiver_id"] = $target->getUserId();
-					$cond1 =[
-						'column'=>'sender_id',
-						'match'=>'=',
-						'value'=>$notif["sender_id"]
-					];
-					$cond2 = [
-						'joint'=>'AND',
-						'column'=>'receiver_id',
-						'match'=>'=',
-						'value'=>$notif["receiver_id"]
-					];
-					$cond3 = [
-						'joint'=>'AND',
-						'column'=>'notify_type',
-						'match'=>'=',
-						'value'=>$notif["notify_type"] 
-					];
-					if(empty($this->notificationsTable->find([$cond1,$cond2, $cond3])))
-					{
-						$notif["is_seen"] = 0;
-						$notif["created_at"] = time();
-						$this->notificationsTable->save($notif);
-					}
+					$this->triggerNotification($notif,$user,$target);
 				}
 
 				return[
@@ -813,6 +985,36 @@ class Home {
 			'wrapper'=>false
 		];
 	
+	}
+
+	private function triggerNotification($notif, $sender, $target)
+	{
+		// create notification
+		$notif["sender_id"] = $sender->getUserId();
+		$notif["receiver_id"] = $target->getUserId();
+		$cond1 =[
+			'column'=>'sender_id',
+			'match'=>'=',
+			'value'=>$notif["sender_id"]
+		];
+		$cond2 = [
+			'joint'=>'AND',
+			'column'=>'receiver_id',
+			'match'=>'=',
+			'value'=>$notif["receiver_id"]
+		];
+		$cond3 = [
+			'joint'=>'AND',
+			'column'=>'notify_type',
+			'match'=>'=',
+			'value'=>$notif["notify_type"] 
+		];
+		if(empty($this->notificationsTable->find([$cond1,$cond2, $cond3])))
+		{
+			$notif["is_seen"] = 0;
+			$notif["created_at"] = time();
+			$this->notificationsTable->save($notif);
+		}
 	}
 	// private function following($user){
 		
@@ -921,6 +1123,7 @@ class Home {
 	 */
 	private function searchMain($user,$q="",$filter="")
 	{
+		//dump_to_file($_POST);
 		$me = $user;
 
 		if(empty($q))
@@ -1048,7 +1251,7 @@ class Home {
 			if($postId = $this->postsTable->save($post)->getPostId())
 			{
 				$post = $this->postsTable->findById($postId);
-				$row = loadTemplate('home/fragments/feed.post.html.php',['post'=>$post]);
+				$row = loadTemplate('home/fragments/posts/post.feed.html.php',['post'=>$post,'user'=>$user]);
 				return[
 					'msg'=>'success',
 					'post'=>$row ,
@@ -1132,7 +1335,7 @@ class Home {
 		 * notifications and other messages
 		 * */
 
-		//get most recent of unread message total
+		//get most recent of unread message count
 		$sql = "
 		SELECT 
 			COUNT(message_data)
@@ -1274,7 +1477,7 @@ class Home {
 	 */
 	private function getRecentChats($user)
 	{
-		$relationships = $this->getAllMyRelationShips(0,0);
+		$relationships = $this->getAllMyRelationShips(1,0);
 		$peers = array();
 		$count = 0;
 		foreach($relationships as $relationship)
@@ -1311,7 +1514,7 @@ class Home {
 		if(strlen($q)>2){
 			$result = Array();
 
-			$relationships = $this->getAllMyRelationShips(0,0);
+			$relationships = $this->getAllMyRelationShips(1,0);
 			if(!empty($relationships))
 			{
 				foreach($relationships as $relationship)

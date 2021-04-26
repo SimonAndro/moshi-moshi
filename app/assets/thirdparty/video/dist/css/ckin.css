@@ -1,4 +1,8 @@
 
+video.gallery-vid-bg {
+  background: black
+}
+
 #player {
   float: left;
   padding: 1em 1em 0.5em;

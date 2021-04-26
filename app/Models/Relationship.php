@@ -24,6 +24,10 @@ class Relationship {
 		return $this->usersTable->findById($id);
 	}
 
+	public function getOtherId($myId)
+	{
+		return $myId == $this->follower_id?$this->followee_id:$this->follower_id;
+	}
 	public function getFolloweeId()
 	{
 		return $this->followee_id;

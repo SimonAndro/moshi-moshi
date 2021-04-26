@@ -1087,7 +1087,6 @@ $(document).ready(function() {
                         }
                     }else if(res.caller=="load_gallery")
                     {
-                        console.log(res);
                         $('#galleryFolderPreview .modal-title').html(res.folderName);
                         $('.galleryUploader #i-g-f-id').val(res.folderId);
                         
@@ -1116,6 +1115,21 @@ $(document).ready(function() {
                             $('.error-gallery-folder').removeClass('invisible');
                         }
                         
+                    }
+                    else if(res.caller == "post_reaction")
+                    {
+                        if(res.msg == "success")
+                        {
+                            if(res.target == "post_share"){
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(0).find('.glyphicon').css("color",res.statusColor)
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(0).find('.reposts').html(res.shareCount);
+                            }
+                            else if(res.target == "post_star")
+                            {
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.glyphicon').css("color",res.statusColor)
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.likes').html(res.likeCount);
+                            }
+                        }
                     }
                    
                 } catch (e) {
@@ -1158,16 +1172,16 @@ function updateNotifications(res)
     var currN = Number($('#msg-flag-btn .badge').html());
     var currM = Number($('#notify-btn .badge').html());
     $('#msg-flag-btn .badge').html(badgeTruncate(res.unreadc));
-    $('#notify-btn .badge').html(badgeTruncate(res.unreadc));
+    $('#notify-btn .badge').html(badgeTruncate(res.unreadn));
 
     if(Number(res.unreadc) > currN)
     {
         playSound(urlNewMsg);
     }
-    // if(Number(res.unreadn) > currM)
-    // {
-
-    // }
+    if(Number(res.unreadn) > currM)
+    {
+        playSound(urlNewMsg);
+    }
 }
 
 function badgeTruncate(num)

@@ -10,6 +10,8 @@ class appRoutes implements \Ninja\Routes {
 	private $relationshipsTable;
 	private $postsTable;
 	private $notificationsTable;
+	private $postLikesTable;
+	private $postSharesTable;
 	private $authentication;
 
 	public function __construct() {
@@ -22,12 +24,14 @@ class appRoutes implements \Ninja\Routes {
 		$this->notificationsTable = new \Ninja\DatabaseTable($pdo, 'notification', 'id', '\app\Models\Notification',[&$this->usersTable]);
 		$this->usersTable = new \Ninja\DatabaseTable($pdo, 'user', 'id', '\app\Models\User',[&$this->relationshipsTable,&$this->chatsTable, &$this->filesTable, &$this->notificationsTable]);
 		$this->relationshipsTable = new \Ninja\DatabaseTable($pdo, 'relationship', 'id', '\app\Models\Relationship',[&$this->usersTable]);
-		$this->postsTable = new \Ninja\DatabaseTable($pdo, 'post', 'id', '\app\Models\Post',[&$this->usersTable]);
+		$this->postLikesTable = new \Ninja\DatabaseTable($pdo,'postlike','id','\app\Models\PostLike');
+		$this->postSharesTable = new \Ninja\DatabaseTable($pdo,'postshare','id','\app\Models\PostShare');
+		$this->postsTable = new \Ninja\DatabaseTable($pdo, 'post', 'id', '\app\Models\Post',[&$this->usersTable,&$this->postLikesTable,&$this->postSharesTable]);
 		$this->authentication = new \Ninja\Authentication($this->usersTable, 'email', 'password');
 	}
 
 	public function getRoutes(): array {
-		$homeController = new \app\Controllers\Home($this->authentication,$this->usersTable, $this->relationshipsTable, $this->chatsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable);
+		$homeController = new \app\Controllers\Home($this->authentication,$this->usersTable, $this->relationshipsTable, $this->chatsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable,$this->postLikesTable,$this->postSharesTable);
 		$profileController = new \app\Controllers\Profile($this->authentication,$this->usersTable,$this->relationshipsTable,$this->postsTable);
 		$userController = new \app\Controllers\Register($this->usersTable,$this->filesTable,$this->relationshipsTable,$this->authentication);
 		$loginController = new \app\Controllers\Login($this->authentication);
@@ -116,6 +120,17 @@ class appRoutes implements \Ninja\Routes {
 				'POST' => [
 					'controller' => $settingController,
 					'action' => 'editsettings'
+				],
+				'login' => true
+			],
+			'post_reaction'=>[
+				'GET' => [
+					'controller' => $homeController,
+					'action' => 'loadPostReaction'
+				],
+				'POST' => [
+					'controller' => $homeController,
+					'action' => 'postReaction'
 				],
 				'login' => true
 			]

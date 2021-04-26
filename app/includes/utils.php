@@ -124,15 +124,18 @@ function isImage($source) {
 
 function createThumbnail($movie, $path)
 {
-    $sec = 10;
-    $thumbnail = md5(time()) . "." . "png";
-    $path  = $path. $thumbnail;
-    $ffmpeg = FFMpeg\FFMpeg::create();
-    $video = $ffmpeg->open($movie);
-    $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds($sec));
-    $frame->save($path);
-    return $thumbnail;
+    // $sec = 10;
+    //$thumbnail = md5(time()) . "." . "png";
+    //$path  = $path. $thumbnail;
+    // $ffmpeg = FFMpeg\FFMpeg::create();
+    // $video = $ffmpeg->open($movie);
+    // $frame = $video->frame(FFMpeg\Coordinate\TimeCode::fromSeconds($sec));
+    // $frame->save($path);
+    // return $thumbnail;
+    return "//uploads//default/default-cover.png";
+
 }
+
 
 function countMagnitude($num)
 {
@@ -151,10 +154,30 @@ function countMagnitude($num)
                 "mag"=>"k"
             ];
         }else{
-            return [
-                "num" => floor($num/1000000) ,
-                "mag"=>"m"
-            ];
+
+            if($num<1000000000)
+            {
+                return [
+                    "num" => floor($num/1000000) ,
+                    "mag"=>"m"
+                ];
+            }else{
+                if($num<1000000000000)
+                {
+                    return [
+                        "num" => floor($num/1000000000) ,
+                        "mag"=>"b"
+                    ];
+                }else{
+                   
+                    return [
+                        "num" => floor($num/1000000000000) ,
+                        "mag"=>"t"
+                    ];
+                    
+                }
+            }
+            
         }
     }
 
@@ -206,8 +229,7 @@ function howOld($created_at)
 }
 
   
-if(file_exists("debug!.txt"))
-    {
-        file_put_contents("debug!.txt",
-        date("H:i:s")."->".print_r($things,true)."\n",FILE_APPEND | LOCK_EX);
-    }
+function dump_to_file($content)
+{
+    file_put_contents('E:\Ampps\www\moshi-moshi-app-redev-2021-1-7\debug.txt',print_r($content,true)."\n",FILE_APPEND | LOCK_EX);
+}

@@ -60,11 +60,13 @@
                             </li>
                             <?php if(isset($profileOwner)): ?>
                             <li class="goto-gallery">
-                                <a href="profile?who=<?=$profileOwner->getUserId()?>&gal=1&req=<?=$storedUser->getUserId()?>">
+                                <a href="profile?who=<?=$profileOwner->getUserId()?>&gal=1&req=<?=$storedUser->getUserId()?>" >
+                                    <div>
                                     <span class="profile-stats">Gallery</span>
                                     <span class="profile-value">
                                         <?=$stats['galleryFiles']['num'].$stats['galleryFiles']['mag']?>
                                     </span>
+                                    </div>
                                 </a>
                             </li>
                             <?php endif ?>
@@ -105,33 +107,30 @@
 
                 <div id="profile-photo" class="card" style="margin-top:5px;margin-bottom:10px;">
                     <div class="card-block profile-actions">
-                        <?php if($relationship = $profileOwner->isFriendsWith($user->getUserId())):?>
-                        <?php if($relationship->isFollowedBack()):?>
-                        <div data-goal="0" id="<?=$profileOwner->getUserId()?>">
-                            <a href="javascript:void(0);" role="button"
-                                class="btn btn-default  btn-follow-search item-actions">
+                        
+                <div id="profile-photo" class="card" style="margin-top:5px;margin-bottom:10px;">
+                    <div class="card-block profile-actions" id="<?=$profileOwner->getUserId()?>"
+                            data-goal="<?=$profileOwner->getRelationChanger($user->getUserId())?>">
+                            <a href="javascript:void(0);" role="button" class="btn btn-default  btn-follow-search item-actions">
+                                <?php if($profileOwner->getRelationChanger($user->getUserId()) === "unfollow"):?>
                                 <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                                 Unfollow
-                            </a>
-                        </div>
-                        <?php else:?>
-                        <div data-goal="2" id="<?=$profileOwner->getUserId()?>">
-                            <a href="javascript:void(0);" role="button"
-                                class="btn btn-default  btn-follow-search item-actions">
-                                <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span>
-                                Recip
-                            </a>
-                        </div>
-                        <?php endif?>
-                        <?php elseif($profileOwner->isFriendsWith($user->getUserId())):?>
-                        <div data-goal="1" id="<?=$profileOwner->getUserId()?>">
-                            <a href="javascript:void(0);" role="button"
-                                class="btn btn-default  btn-follow-search item-actions">
+                                <?php elseif($profileOwner->getRelationChanger($user->getUserId()) === "unrecip"):?>
+                                <span class="glyphicon glyphicon-resize-full" aria-hidden="true"></span>
+                                Unrecip 
+                                <?php elseif($profileOwner->getRelationChanger($user->getUserId()) === "follow"):?>
                                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                Follow
+                                Follow  
+                                <?php elseif($profileOwner->getRelationChanger($user->getUserId()) === "recip"):?>
+                                <span class="glyphicon glyphicon-resize-small" aria-hidden="true"></span>
+                                Recip
+                                <?php endif?>
                             </a>
-                        </div>
-                        <?php endif?>
+                    </div>
+                </div>
+
+                        
+                        
                     </div>
                 </div>
 
@@ -151,7 +150,7 @@
                     </div>
 
                     <div id='player'>
-                        <video id='video-element' poster="">
+                        <video autoplay id='video-element' poster="">
                             <source src='' type=''>
                         </video>
                         <div id='controls'>
@@ -163,7 +162,7 @@
                                     aria-hidden="true"></a>
                             <a id='btnStop' class='stop' title='stop' accesskey="X" onclick='stopVideo();'><span
                                     class="glyphicon glyphicon-stop" aria-hidden="true"></a>
-                            <input type="range" id="volume-bar" title="volume" min="0" max="1" step="0.1" value="1">
+                            <a><input type="range" id="volume-bar" title="volume" min="0" max="1" step="0.1" value="1">
                             <a id='btnMute' class='mute' title='mute' onclick='muteVolume();'> <span
                                     class="glyphicon glyphicon-volume-off" aria-hidden="true"></a>
                             <a id='btnFullScreen' class='fullscreen' title='toggle full screen' accesskey="T"
@@ -260,12 +259,12 @@
                         Your stats
                     </li>
                     <li class="list-group-item">
-                        Number of reposts
-                        <span class="label label-success">100%</span>
+                        Your posts were reposted
+                        <span class="label label-success"> <?=$stats['reposts']['num'].$stats['reposts']['mag']?> X</span>
                     </li>
                     <li class="list-group-item">
-                        Number of likes
-                        <span class="label label-danger">100%</span>
+                        Your posts were liked
+                        <span class="label label-danger"> <?=$stats['likes']['num'].$stats['likes']['mag']?> X</span>
                     </li>
                     <li class="list-group-item">
                         Influence

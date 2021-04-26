@@ -59,7 +59,7 @@
                 <?php
                     foreach($searchedPosts as $post)
                     {
-                    echo loadTemplate('home/fragments/posts/post.feed.html.php',['post'=>$post]);
+                    echo loadTemplate('home/fragments/posts/post.feed.html.php',['post'=>$post,'user'=>$me]);
                     }        
                 ?>
             </ul>

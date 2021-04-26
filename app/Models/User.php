@@ -3,6 +3,13 @@ namespace app\Models;
 
 class User {
 
+	const EDIT_JOKES = 1;
+	const DELETE_JOKES = 2;
+	const ADD_CATEGORIES = 4;
+	const EDIT_CATEGORIES = 8;
+	const REMOVE_CATEGORIES = 16;
+	const EDIT_USER_ACCESS = 32;
+
 	public $id;
 	public $name;
 	public $email;
@@ -163,6 +170,7 @@ class User {
 
 	public function getRelationChanger($peerId)
 	{
+		//dump_to_file("relationship_check");
 		$cond1 = [
 			'open_brackets'=> 1,
 			'column'=>'follower_id',
@@ -213,11 +221,12 @@ class User {
 			}
 			
 		}
+		//dump_to_file($relationship_check);
 		return $changer;
 	}
 
 	/**
-     * Calculate and return how old the post is
+     * Calculate and return how old the user is
      */
     public function howOld()
     {
@@ -264,4 +273,7 @@ class User {
         return $age;
     }
 
+	public function hasPermission($permission) {
+		return $this->permissions & $permission;  
+	}
 }
