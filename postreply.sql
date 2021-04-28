@@ -37,32 +37,6 @@ CREATE TABLE `postreply` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `postreply`
---
-
-INSERT INTO `postreply` (`id`, `post_id`, `creator_id`, `created_at`, `message_data`) VALUES
-(1, 53, 39, 1619606633, 'first reply'),
-(2, 53, 39, 1619606939, 'Another reply'),
-(3, 53, 39, 1619606947, 'Another reply'),
-(4, 53, 39, 1619606948, 'Another reply'),
-(5, 53, 39, 1619617488, 'Wagwam'),
-(6, 53, 39, 1619617637, 'first reply 3'),
-(7, 53, 39, 1619617669, 'ggg'),
-(8, 53, 39, 1619619760, 'first reply'),
-(9, 53, 39, 1619619765, 'Another reply'),
-(10, 53, 39, 1619619770, 'first reply 3'),
-(11, 53, 39, 1619619778, 'haha'),
-(12, 50, 39, 1619620023, 'hey'),
-(13, 53, 39, 1619620469, 'first reply'),
-(14, 53, 39, 1619620499, 'okay'),
-(15, 52, 39, 1619620505, 'why'),
-(16, 52, 39, 1619620508, 'no no'),
-(17, 52, 39, 1619620510, 'haha'),
-(18, 52, 39, 1619620519, 'why man'),
-(19, 53, 5, 1619620752, 'haha'),
-(20, 53, 39, 1619620768, 'hehe');
-
---
 -- Indexes for dumped tables
 --
 
