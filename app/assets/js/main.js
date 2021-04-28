@@ -1134,8 +1134,8 @@ $(document).ready(function() {
                             }
                             else if(res.target == "post_star")
                             {
-                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.glyphicon').css("color",res.statusColor)
-                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.likes').html(res.likeCount);
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(2).find('.glyphicon').css("color",res.statusColor)
+                                $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(2).find('.likes').html(res.likeCount);
                             }else if(res.target == "post_reply")
                             {
                                 f.parents('.reply-tab').find('.rep-list').html(res.replies);
