@@ -317,12 +317,14 @@ ul#feed .feed-post h5 > small {
 }
 
 ul#feed .action-list {
-  margin-left: 13%;
+/*   margin-left: 13%; */
   padding-left: 1em;
+  display:flex;
+  justify-content:space-evenly
 }
 
 ul#feed .action-list a {
-  width: 15%;
+/*   width: 100%; */
   display: inline-block;
 }
 
@@ -1313,4 +1315,44 @@ input#galleryInput {
     left: 0;
     top: 0;
     z-index: 99;
+}
+
+.post-reply .common-form{
+  display:flex;
+}
+
+.reply-input{
+  width:100%;
+}
+
+.rep-list ul{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+
+.rep-list ul li{
+  display:flex;
+  border-bottom: none !important;
+}
+
+.rep-head
+{
+  display:inline-block;
+  margin-top:5px;
+  padding:5px;
+  font-size:15px;
+  border: 1px solid #ccc;
+} 
+
+.rep-head span{
+  padding:5px;
+}
+
+.rep-head:hover{
+  cursor: pointer;
+}
+
+.reply-tab{
+  display: none;
 }

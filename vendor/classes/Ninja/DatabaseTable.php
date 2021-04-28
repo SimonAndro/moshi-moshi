@@ -127,13 +127,20 @@ class DatabaseTable {
 		}
   
 		$query = $this->query($query, $parameters);
-		
+	
 		return $query->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
 	}
 
-	public function customQuery($sql,$parameters)
+	public function customQuery($sql)
 	{
-		$query = $this->query($sql,$parameters);
+		$args = func_get_args();
+        array_shift($args);
+
+        if (isset($args[0]) and is_array($args[0])) {
+            $args = $args[0];
+        }
+
+		$query = $this->query($sql, $args);
 		return $query->fetchAll(\PDO::FETCH_CLASS, $this->className, $this->constructorArgs);
 	}
 

@@ -12,6 +12,7 @@ class appRoutes implements \Ninja\Routes {
 	private $notificationsTable;
 	private $postLikesTable;
 	private $postSharesTable;
+	private $postRepliesTable;
 	private $authentication;
 
 	public function __construct() {
@@ -26,12 +27,13 @@ class appRoutes implements \Ninja\Routes {
 		$this->relationshipsTable = new \Ninja\DatabaseTable($pdo, 'relationship', 'id', '\app\Models\Relationship',[&$this->usersTable]);
 		$this->postLikesTable = new \Ninja\DatabaseTable($pdo,'postlike','id','\app\Models\PostLike');
 		$this->postSharesTable = new \Ninja\DatabaseTable($pdo,'postshare','id','\app\Models\PostShare');
-		$this->postsTable = new \Ninja\DatabaseTable($pdo, 'post', 'id', '\app\Models\Post',[&$this->usersTable,&$this->postLikesTable,&$this->postSharesTable]);
+		$this->postRepliesTable = new \Ninja\DatabaseTable($pdo,'postreply','id','\app\Models\PostReply',[&$this->usersTable]);
+		$this->postsTable = new \Ninja\DatabaseTable($pdo, 'post', 'id', '\app\Models\Post',[&$this->usersTable,&$this->postLikesTable,&$this->postSharesTable,&$this->postRepliesTable]);
 		$this->authentication = new \Ninja\Authentication($this->usersTable, 'email', 'password');
 	}
 
 	public function getRoutes(): array {
-		$homeController = new \app\Controllers\Home($this->authentication,$this->usersTable, $this->relationshipsTable, $this->chatsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable,$this->postLikesTable,$this->postSharesTable);
+		$homeController = new \app\Controllers\Home($this->authentication,$this->usersTable, $this->relationshipsTable, $this->chatsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable,$this->postLikesTable,$this->postSharesTable,$this->postRepliesTable);
 		$profileController = new \app\Controllers\Profile($this->authentication,$this->usersTable,$this->relationshipsTable,$this->postsTable);
 		$userController = new \app\Controllers\Register($this->usersTable,$this->filesTable,$this->relationshipsTable,$this->authentication);
 		$loginController = new \app\Controllers\Login($this->authentication);

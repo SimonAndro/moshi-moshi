@@ -9,12 +9,14 @@ class Post {
 	private $usersTable;
     private $postLikesTable;
     private $postSharesTable;
+    private $postRepliesTable;
 	private $user;
 
-	public function __construct(\Ninja\DatabaseTable $usersTable, \Ninja\DatabaseTable $postLikesTable, \Ninja\DatabaseTable $postSharesTable) {
+	public function __construct(\Ninja\DatabaseTable $usersTable, \Ninja\DatabaseTable $postLikesTable, \Ninja\DatabaseTable $postSharesTable,\Ninja\DatabaseTable $postRepliesTable) {
 		$this->usersTable = $usersTable;
         $this->postLikesTable = $postLikesTable;
         $this->postSharesTable = $postSharesTable;
+        $this->postRepliesTable = $postRepliesTable;
 	}
 
     public function getPostId()
@@ -122,6 +124,12 @@ class Post {
         }
 
         return 0;
+    }
+
+    public function getReplies()
+    {
+        $sql = "SELECT * from postreply WHERE post_id=? ORDER BY id DESC";
+        return $this->postRepliesTable->customQuery($sql,$this->id);
     }
 
 }

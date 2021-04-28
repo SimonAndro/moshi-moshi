@@ -16,10 +16,11 @@ class Home {
 	private $thumbnailsTable;
 	private $postLikesTable;
 	private $postSharesTable;
+	private $postRepliesTable;
 
 	private $mySelf;
 
-	public function __construct(Authentication $authentication, DatabaseTable $usersTable, DatabaseTable $relationshipsTable, DatabaseTable $chatsTable,DatabaseTable $postsTable, DatabaseTable $notificationsTable, DatabaseTable $galleryFoldersTable,DatabaseTable $filesTable,DatabaseTable $thumbnailsTable,DatabaseTable $postLikesTable,DatabaseTable $postSharesTable) {
+	public function __construct(Authentication $authentication, DatabaseTable $usersTable, DatabaseTable $relationshipsTable, DatabaseTable $chatsTable,DatabaseTable $postsTable, DatabaseTable $notificationsTable, DatabaseTable $galleryFoldersTable,DatabaseTable $filesTable,DatabaseTable $thumbnailsTable,DatabaseTable $postLikesTable,DatabaseTable $postSharesTable,DatabaseTable $postRepliesTable) {
 		$this->authentication = $authentication;
 		$this->usersTable = $usersTable;
 		$this->relationshipsTable = $relationshipsTable;
@@ -31,6 +32,7 @@ class Home {
 		$this->thumbnailsTable = $thumbnailsTable;
 		$this->postLikesTable = $postLikesTable;
 		$this->postSharesTable = $postSharesTable;
+		$this->postRepliesTable = $postRepliesTable;
 	}
 
 	/***
@@ -67,6 +69,25 @@ class Home {
 		}else if( $action == 'get-unreadMsg')
 		{
 			return $this->getRecentChats($user);
+		}else if($action == "get-replies")
+		{
+			\dump_to_file($_GET);
+			$msg = "fail";
+
+			$postId = $_GET['postId'];
+			if($post = $this->postsTable->findById($postId))
+			{
+				$replies = $post->getReplies();
+				$replyCount = count($replies);
+				$repliesHtml = loadTemplate("home/fragments/posts/post.reply.html.php",["replies"=>$replies]);
+				$msg = "success";
+			}
+			return[
+				'msg'=>$msg,
+				'replyCount'=>$replyCount,
+				'replies'=>$repliesHtml,
+				'wrapper'=>false
+			];
 		}
 
 		//handling search queries
@@ -199,6 +220,24 @@ class Home {
 						$postId = $post->getPostId();
 						$msg = "success";
 					}
+				}elseif($target == "post_reply")
+				{
+					$rep = trim($val['reply']);
+					if(strlen($rep) > 0)
+					{
+						$postReply["post_id"] = $val['post'];
+						$postReply["created_at"] = time();
+						$postReply["message_data"] = $rep;
+						$postReply["creator_id"] = $user->getUserId();
+
+						$this->postRepliesTable->save($postReply);
+
+						$replies = $post->getReplies();
+						$replyCount = count($replies);
+						$repliesHtml = loadTemplate("home/fragments/posts/post.reply.html.php",["replies"=>$replies]);
+						$msg = "success";
+					}
+					
 				}
 				
 			}
@@ -209,7 +248,9 @@ class Home {
 			'msg'=>$msg,
 			'shareCount'=>$shareCount,
 			'likeCount'=>$likeCount,
+			'replyCount'=>$replyCount,
 			'statusColor'=>$statusColor,
+			'replies'=>$repliesHtml,
 			'post'=>$postId,
 			'target'=>$target,
 			'caller'=>$val['caller'],
@@ -1340,11 +1381,10 @@ class Home {
 		SELECT 
 			COUNT(message_data)
 				FROM chat 
-				WHERE receiver_id=:receiver_id AND seen=0
+				WHERE receiver_id=? AND seen=?
 		";
 
-		$parameters[':receiver_id'] = $user->getUserId();
-		if($result = $this->chatsTable->customQuery($sql,$parameters)[0])
+		if($result = $this->chatsTable->customQuery($sql,$user->getUserId(),0)[0])
 		{
 			$unreadc = $result->getMessageCount();
 		}else{

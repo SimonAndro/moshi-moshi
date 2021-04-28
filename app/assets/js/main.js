@@ -1051,6 +1051,14 @@ $(document).ready(function() {
         // if (f.data('not-ready') !== undefined && f.data('not-ready')) return false;
         // if (f.data('no-loader') === undefined) pageLoader(true);
 
+        if(f.parent().hasClass('post-reply')) // don't submit empty replies
+        {
+            if(f.find('.reply-input').val().trim().length==0)
+            {
+                return false;
+            }
+        }
+
         f.ajaxSubmit({
             url : url,
             uploadProgress: function(event, position, total, percentComplete) {
@@ -1128,6 +1136,10 @@ $(document).ready(function() {
                             {
                                 $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.glyphicon').css("color",res.statusColor)
                                 $($("#feed").find("#"+res.post+" .action-list")).find('a').eq(1).find('.likes').html(res.likeCount);
+                            }else if(res.target == "post_reply")
+                            {
+                                f.parents('.reply-tab').find('.rep-list').html(res.replies);
+                                f.parents('li').find('.action-list .rep-show .replies').html("("+res.replyCount+")");
                             }
                         }
                     }
@@ -1144,10 +1156,54 @@ $(document).ready(function() {
 
             }
         });
+        
+        if(f.parent().hasClass('post-reply')) // clear input field
+        {
+            f.find('.reply-input').val('');
+        }
+
         return false;
     });
 
+    $(".rep-show").on("click", function(){
+        var icon = $(this).find('i');
+        if( icon.hasClass('glyphicon-menu-up'))
+        {
+            icon.removeClass('glyphicon-menu-up').addClass('glyphicon-menu-down');
+            $(this).parents('li').find('.reply-tab').hide();
+        
+        }else{
+            icon.removeClass('glyphicon-menu-down').addClass('glyphicon-menu-up');
+            $(this).parents('li').find('.reply-tab').show();
+            var o = $(this);
+            $.ajax({
+                type: "get",
+                url: "home",
+                data: {
+                    action: "get-replies",
+                    postId: $(this).attr('data-postId')
+                },
+                success: function(res) {
+                    console.log(res);
+                    if(res.msg == "success")
+                    {
+                        o.parents('li').find('.rep-list').html(res.replies);
+                        o.parents('li').find('.replies').html("("+res.replyCount+")");
+                    }
+                 
+                }
+            });
+        }
+    });
+
 });
+
+
+function showReplies(o)
+{
+    console.log($(o).html());
+}
+
 function validate_file_size(input, type, func,param){
     var files = input.files;
 
