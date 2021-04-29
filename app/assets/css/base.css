@@ -223,6 +223,27 @@ nav form#search .glyphicon-search,div form#search .glyphicon-search,#search-gall
   text-decoration: none;
 }
 
+.user-stats-all{
+  display:flex;
+  justify-content:center
+}
+.user-stats-all li{
+/*   width:100%; */
+  text-align:center;
+/*   border: 1px solid #ccc; */
+/*   border-radius: 8px; */
+  margin:2px !important;
+  cursor: pointer;
+}
+
+.user-stats-all li a{
+  text-decoration: none;
+}
+
+.user-stats-all li:hover{
+  background-color: #e7e7e7;
+}
+
 .card-block ul .profile-stats {
   color: #777;
   display: block;
@@ -980,6 +1001,7 @@ div#app-info {
   float: right;
   margin-top:20px; 
   margin-right: 20px;
+  width:100px;
 }
 .results-end-main
 {
@@ -1044,7 +1066,7 @@ div#app-info {
   height: 60px;
 }
 
-.goto-gallery{
+/* .goto-gallery{
   border: 1px solid #ccc;
   border-radius: 10px;
   box-shadow: 0 0 16px #333;
@@ -1052,7 +1074,7 @@ div#app-info {
  
  .goto-gallery:hover{
    background-color: #ccc;
- }
+ } */
 
  #gallery-main-exp ul{
    padding-top:15px;
@@ -1355,4 +1377,8 @@ input#galleryInput {
 
 .reply-tab{
   display: none;
+}
+
+#following-modal{
+/*   top:25%; */
 }

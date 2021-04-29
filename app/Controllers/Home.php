@@ -71,9 +71,7 @@ class Home {
 			return $this->getRecentChats($user);
 		}else if($action == "get-replies")
 		{
-			\dump_to_file($_GET);
 			$msg = "fail";
-
 			$postId = $_GET['postId'];
 			if($post = $this->postsTable->findById($postId))
 			{

@@ -35,9 +35,9 @@
                         <p class="card-text text-about">
                             <?=$user->getAbout()==""?"No about information No about information No about information No about information No about information No about information No about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about informationNo about information ":$user->getAbout()?>
                         </p>
-                        <ul class="list-inline list-unstyled">
-                            <li id="card-tweets">
-                                <a href="#">
+                        <ul data-targetId=<?=$user->getUserId()?> class="list-inline list-unstyled user-stats-all">
+                            <li class="card-tweets">
+                                <a href="profile?who=<?=$user->getUserId()?>">
                                     <span class="profile-stats">Posts</span>
                                     <span class="profile-value">
                                         <?=$stats['posts']['num'].$stats['posts']['mag']?>
@@ -45,7 +45,7 @@
                                 </a>
                             </li>
                             <li class="card-following">
-                                <a href="#">
+                                <a href="javascript:void(0);">
                                     <span class="profile-stats">Following</span>
                                     <span class="profile-value">
                                         <?=$stats['followees']['num'].$stats['followees']['mag']?>
@@ -53,7 +53,7 @@
                                 </a>
                             </li>
                             <li class="card-followers">
-                                <a href="#">
+                                <a href="javascript:void(0);">
                                     <span class="profile-stats">Followers</span>
                                     <span class="profile-value">
                                         <?=$stats['followers']['num'].$stats['followers']['mag']?>
@@ -428,6 +428,24 @@
                         <button id="btn-post-now" type="button" class="btn btn-primary">
                             Post Now
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="following-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="px-5  list-unstyled">
+                            
+                        </ul>
                     </div>
                 </div>
             </div>

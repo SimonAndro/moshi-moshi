@@ -263,4 +263,9 @@ class DatabaseTable {
 
 		return $entity;	
 	}
+
+	public function getTableName()
+	{
+		return $this->table;
+	}
 }

@@ -1196,6 +1196,44 @@ $(document).ready(function() {
         }
     });
 
+    $('.user-stats-all li').on('click', function(e){
+        var c = $(this).attr('class');
+        var targetId = $(this).parent().attr('data-targetId');
+        var target = "";
+        if(c == "goto-gallery" || c == "card-tweets")
+        {
+            return true;
+        }else if(c=="card-following")
+        {
+            target = "following";
+            $('#following-modal .modal-title').html("Following");
+        }else if(c=="card-followers")
+        {
+            target = "followers";
+            $('#following-modal .modal-title').html("Followers");
+        }
+        $('#following-modal .modal-body ul').html('<div id="loading-chat"><div class="loadingio-spinner-bean-eater-2pdyvrj4d2h" ><div class="ldio-gwhc8j99wub"><div><div></div><div></div><div></div></div><div><div></div><div></div><div></div></div></div></div></div>');
+        $('#following-modal').modal("show");
+        $.ajax({
+            type: "get",
+            url: "post-following",
+            data: {
+                target: target,
+                targetId: targetId
+            },
+            success: function(res) {
+                console.log(res);
+                if(res.msg == "success")
+                {
+                    $('#following-modal .modal-body ul').html(res.fHtml);
+                }
+             
+            }
+        });
+
+        
+    });
+
 });
 
 

@@ -34,6 +34,8 @@ class appRoutes implements \Ninja\Routes {
 
 	public function getRoutes(): array {
 		$homeController = new \app\Controllers\Home($this->authentication,$this->usersTable, $this->relationshipsTable, $this->chatsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable,$this->postLikesTable,$this->postSharesTable,$this->postRepliesTable);
+		$postController = new \app\Controllers\postController($this->authentication,$this->usersTable, $this->relationshipsTable,$this->postsTable,$this->notificationsTable, $this->galleryFoldersTable,$this->filesTable,$this->thumbnailsTable,$this->postLikesTable,$this->postSharesTable,$this->postRepliesTable);
+		
 		$profileController = new \app\Controllers\Profile($this->authentication,$this->usersTable,$this->relationshipsTable,$this->postsTable);
 		$userController = new \app\Controllers\Register($this->usersTable,$this->filesTable,$this->relationshipsTable,$this->authentication);
 		$loginController = new \app\Controllers\Login($this->authentication);
@@ -125,6 +127,17 @@ class appRoutes implements \Ninja\Routes {
 				],
 				'login' => true
 			],
+			'post'=>[
+				'GET' => [
+					'controller' => $postController,
+					'action' => 'index'
+				],
+				'POST' => [
+					'controller' => $postController,
+					'action' => 'createPost'
+				],
+				'login' => true
+			],
 			'post_reaction'=>[
 				'GET' => [
 					'controller' => $homeController,
@@ -135,6 +148,16 @@ class appRoutes implements \Ninja\Routes {
 					'action' => 'postReaction'
 				],
 				'login' => true
+			],
+			'post-following'=>[
+				'GET'=>[
+					'controller' => $postController,
+					'action' => 'getFollowing'
+				],
+				'POST'=>[
+					'controller' => $postController,
+					'action' => 'postFollowing'
+				]
 			]
 		];
 

@@ -98,7 +98,7 @@ class Register {
 						'user'=>$user,
 						'me'=>$me,
 					]);
-					 array_push($friendsgts,$row);
+					array_push($friendsgts,$row);
 				}
 				
 				$fragment = loadTemplate('auth/fragments/profile.friends.html.php',
