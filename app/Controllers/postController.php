@@ -82,7 +82,7 @@ class postController {
             $fHtml = array();
             foreach($following as $f)
             {
-                $peer = $f->getPeer($this->User->getUserId());
+                $peer = $f->getPeer($targetId);
                 $row = loadTemplate('home/fragments/users/user.main.search.html.php',
                                     [
                                         'user'=>$peer,
