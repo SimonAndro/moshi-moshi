@@ -36,7 +36,7 @@ $(document).ready(function() {
         $('#main').addClass('col-md-offset-3');
     }).on('affix-top.bs.affix', function() {
         $(this).css('width', '');
-        $('#main').removeClass('col-md-offset-3');
+         $('#main').removeClass('col-md-offset-3');
     });
 
     $('#login-form').on('submit', function(e){
@@ -1287,6 +1287,12 @@ function badgeTruncate(num)
 function playSound(url) {
     const audio = new Audio(url);
     audio.play();
+}
+
+function discover()
+{
+    $('#main-seach-home-input').val("a");
+    startSearchMain();
 }
 
 function startSearchMain()

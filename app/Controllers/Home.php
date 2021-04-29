@@ -87,7 +87,7 @@ class Home {
 				'wrapper'=>false
 			];
 		}
-
+	
 		//handling search queries
 		if($q = $_GET['q']) // reload search
 		{
@@ -824,7 +824,11 @@ class Home {
 		}
 		
 		if (empty($feeds)) {
-			$feeds[] = '<p id="feed-no-post" style="padding-top:10px;" class="text-center">your feeds will appear here when you post or the people you follow post </p>';
+			$feeds[] = 
+			'<div class="text-center" style="margin-bottom:10px;">
+			<p id="feed-no-post" style="padding-top:10px;" >your feeds will appear here when you post or the people you follow post </p>
+			<a onclick="return discover()" href="javascript:void(0);" class="btn btn-success" style="margin-top:10px;">Click to Discover</a>
+			</div>';
 		} 
 
         return [ 
