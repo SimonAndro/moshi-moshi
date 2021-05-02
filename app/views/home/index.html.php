@@ -369,6 +369,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <h4 id="chat-peer-title" class="modal-title" data-my-id="">Username</h4>
+                            <span class="glyphicon glyphicon-earphone"></span> 
                             <hr>
                         </div>
 

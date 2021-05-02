@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 12, 2021 at 04:15 PM
+-- Generation Time: May 02, 2021 at 12:01 PM
 -- Server version: 10.1.38-MariaDB
 -- PHP Version: 7.3.11
 
@@ -111,6 +111,20 @@ CREATE TABLE `postlike` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `postreply`
+--
+
+CREATE TABLE `postreply` (
+  `id` int(11) NOT NULL,
+  `post_id` int(11) NOT NULL,
+  `creator_id` int(11) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  `message_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `postshare`
 --
 
@@ -213,6 +227,12 @@ ALTER TABLE `postlike`
   ADD UNIQUE KEY `id` (`id`);
 
 --
+-- Indexes for table `postreply`
+--
+ALTER TABLE `postreply`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `postshare`
 --
 ALTER TABLE `postshare`
@@ -278,6 +298,12 @@ ALTER TABLE `post`
 -- AUTO_INCREMENT for table `postlike`
 --
 ALTER TABLE `postlike`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `postreply`
+--
+ALTER TABLE `postreply`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
