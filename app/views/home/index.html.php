@@ -332,7 +332,7 @@
                             <button id="select-close" type="button" class="close" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
-                            <h4 class="modal-title">Start Chat</h4>
+                            <h4 class="modal-title">Begin Chat</h4>
 
                             <hr>
 
