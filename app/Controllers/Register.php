@@ -27,10 +27,7 @@ class Register {
 
 		$val = $_POST['val'];
 		if($val)
-		{
-  
-
-			
+		{		
 			if($user = $this->authentication->getUser())
 			{
 				$me  = $user;
